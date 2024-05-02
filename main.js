@@ -39,23 +39,28 @@ const loader = new GLTFLoader();
 
 //fond de la scene
 var textureLoader = new THREE.TextureLoader();
-var texture = textureLoader.load('publique/grey.jpg');
+var texture = textureLoader.load('public/grey.jpg');
 scene.background = texture;
 
 // Liste pour stocker les objets sélectionnés
 var selectedObjects = [];
 
 // Importation du fichier glTF de Blender
-loader.load('publique/croix.glb', function (gltf) {
+loader.load('/croix.glb', function (gltf) {
     const gltfScene = gltf.scene;
     scene.add(gltfScene);
 
     if (gltfScene) {
         // Accédez aux enfants de la scène principale pour trouver l'objet
         gltfScene.traverse(function(child) {
+            
+            if(child.name === undefined) throw new Error("No name");
+
+            console.log(child)
+
             if (child.name === 'plato') {
                plato = child;
-               console.log(child.wireframe);
+            //    console.log(child.wireframe);
             }
             if (child.name == 'F'){
                 child.layers.enable(2);
@@ -115,7 +120,7 @@ loader.load('publique/croix.glb', function (gltf) {
     geoG = F_clone.clone()
     console.log(geoF);*/
 
-    });
+});
 
   undefined, function (error) {
     console.error(error);
@@ -213,7 +218,7 @@ function detectIntersection() {
 }
 
  
-///ROTATE //////////////////
+/ROTATE //////////////////
 function rotateObjects(degrees) {
     if (selectedObjects.length > 0) {
         selectedObjects.forEach(object => {
@@ -233,7 +238,7 @@ window.addEventListener('keydown', function (event) {
     }
 }, false);
 
-/// ROTATE IN SYMETRIE/////  ///// empiler les pieces x3 x2 x1
+/ ROTATE IN SYMETRIE/////  ///// empiler les pieces x3 x2 x1
 
 function symetrieObjects(degrees) {
     if (selectedObjects.length > 0) {
@@ -244,6 +249,12 @@ function symetrieObjects(degrees) {
 }
 
 window.addEventListener('keydown', function (event) {
+
+    // Bloque seulement sur les touches
+    if([ "ArrowUp", "ArrowDown" ].includes(event.key)) {
+        event.preventDefault();
+    }
+
     switch (event.key) {
         case 'ArrowUp':
             symetrieObjects(180);
@@ -313,4 +324,3 @@ function animate() {
 }
 
 animate();
-
